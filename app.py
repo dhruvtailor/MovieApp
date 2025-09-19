@@ -1,0 +1,56 @@
+import streamlit as st
+import pandas as pd
+import requests
+
+API_KEY = "c21d959b"  # Get one from http://www.omdbapi.com/apikey.aspx
+movies = ["Inception", "Jurassic Park", "The Godfather"]
+
+def get_director(title):
+    url = f"http://www.omdbapi.com/?t={title}&apikey={API_KEY}"
+    response = requests.get(url).json()
+    if response.get("Response") == "True":
+        return response.get("Title"), response.get("Director", "N/A")
+    else:
+        return None, "Not found"
+    
+st.set_page_config(
+    page_title="Movie Director Finder 🎬",  # Browser tab title
+    page_icon="🎥",                         # Favicon (emoji or path to .png/.ico)
+    layout="wide"                           # "centered" or "wide"
+)
+
+st.title("🎬 Movie Director Finder (Exact Match)")
+st.write("Upload a CSV with a column **Title** to fetch directors (exact title match only).")
+
+uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
+
+if uploaded_file:
+    df = pd.read_csv(uploaded_file)
+
+    if "Title" not in df.columns:
+        st.error("CSV must contain a column named 'Title'")
+    else:
+        results = []
+        with st.spinner("Fetching directors..."):
+            for title in df["Title"]:
+                matched, director = get_director(title)
+                results.append({
+                    "Input Title": title,
+                    "Matched Title": matched if matched else "No match",
+                    "Director": director
+                })
+
+        result_df = pd.DataFrame(results)
+
+        # Show results in app
+        st.subheader("📊 Results")
+        st.dataframe(result_df)
+
+        # Download button
+        csv = result_df.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            label="⬇️ Download Results CSV",
+            data=csv,
+            file_name="movies_with_directors.csv",
+            mime="text/csv"
+        )
