@@ -2,8 +2,7 @@ import streamlit as st
 import pandas as pd
 import requests
 
-API_KEY = "c21d959b"  # Get one from http://www.omdbapi.com/apikey.aspx
-movies = ["Inception", "Jurassic Park", "The Godfather"]
+API_KEY = st.secrets["api_key"]  # Get one from http://www.omdbapi.com/apikey.aspx
 
 def get_director(title):
     url = f"http://www.omdbapi.com/?t={title}&apikey={API_KEY}"
