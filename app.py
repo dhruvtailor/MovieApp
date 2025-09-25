@@ -8,7 +8,7 @@ def get_director(title):
     url = f"http://www.omdbapi.com/?t={title}&apikey={API_KEY}"
     response = requests.get(url).json()
     if response.get("Response") == "True":
-        return response.get("Title"), response.get("Director", "N/A"), response.get("Awards", "N/A")
+        return response.get("Title"), response.get("Director", "N/A"), response.get("Awards", "N/A"), response.get("Year", "N/A"), response.get("Country", "N/A")
     else:
         return None, "Not found"
     
@@ -32,12 +32,14 @@ if uploaded_file:
         results = []
         with st.spinner("Fetching directors..."):
             for title in df["Title"]:
-                matched, director, awards = get_director(title)
+                matched, director, awards, year, country = get_director(title)
                 results.append({
                     "Input Title": title,
                     "Matched Title": matched if matched else "No match",
                     "Director": director,
-                    "Awards": awards
+                    "Awards": awards,
+                    "Year": year,
+                    "Country": country
                 })
 
         result_df = pd.DataFrame(results)
