@@ -6,11 +6,21 @@ API_KEY = st.secrets["api_key"]  # Get one from http://www.omdbapi.com/apikey.as
 
 def get_director(title):
     url = f"http://www.omdbapi.com/?t={title}&apikey={API_KEY}"
-    response = requests.get(url).json()
-    if response.get("Response") == "True":
-        return response.get("Title"), response.get("Director", "N/A"), response.get("Awards", "N/A"), response.get("Year", "N/A"), response.get("Country", "N/A"), response.get("imdbRating", "N/A")
-    else:
-        return None, "Not found"
+    try:
+        response = requests.get(url).json()
+        if response.get("Response") == "True":
+            return response.get("Title"), response.get("Director", "N/A"), response.get("Awards", "N/A"), response.get("Year", "N/A"), response.get("Country", "N/A"), response.get("imdbRating", "N/A")
+        else:
+            return None, "Not found"
+    except Exception:
+        return {
+            "Matched Title": "API Error",
+            "Director": "N/A",
+            "Awards": "N/A",
+            "Year": "N/A",
+            "Country": "N/A",
+            "IMDB Rating": "N/A"
+        }
     
 st.set_page_config(
     page_title="Movie Director Finder 🎬",  # Browser tab title
