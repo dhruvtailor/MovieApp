@@ -11,16 +11,10 @@ def get_director(title):
         if response.get("Response") == "True":
             return response.get("Title"), response.get("Director", "N/A"), response.get("Awards", "N/A"), response.get("Year", "N/A"), response.get("Country", "N/A"), response.get("imdbRating", "N/A")
         else:
-            return None, "Not found"
+            return None, "Not found", "N/A", "N/A", "N/A", "N/A"
     except Exception:
-        return {
-            "Matched Title": "API Error",
-            "Director": "N/A",
-            "Awards": "N/A",
-            "Year": "N/A",
-            "Country": "N/A",
-            "IMDB Rating": "N/A"
-        }
+        # Return a tuple to match expected unpacking
+        return "API Error", "N/A", "N/A", "N/A", "N/A", "N/A"
     
 st.set_page_config(
     page_title="Movie Director Finder 🎬",  # Browser tab title
